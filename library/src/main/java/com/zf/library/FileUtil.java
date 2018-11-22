@@ -50,6 +50,7 @@ public final class FileUtil {
 
     /**
      * 重命名文件
+     * 注意：在Windows上测试时发现，文件名大小写不敏感
      *
      * @param file    文件
      * @param newName 新名称
@@ -65,8 +66,11 @@ public final class FileUtil {
         // 如果文件名没有改变返回true
         if (newName.equals(file.getName())) return true;
         File newFile = new File(file.getParent() + File.separator + newName);
-        // 如果重命名的文件已存在返回false
-        return !newFile.exists() && file.renameTo(newFile);
+        //如果新文件不存在返回false
+        if (!newFile.exists()) {
+            return false;
+        }
+        return file.renameTo(newFile);
     }
 
     /**
