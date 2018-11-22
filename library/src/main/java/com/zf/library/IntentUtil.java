@@ -85,12 +85,14 @@ public final class IntentUtil {
     /**
      * 打开app具体设置界面
      *
+     * @param context
      * @param packageName
      */
-    public static void appDetailsSettings(String packageName) {
+    public static void appDetailsSettings(Context context, String packageName) {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         intent.setData(Uri.parse("package:" + packageName));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 
     /**

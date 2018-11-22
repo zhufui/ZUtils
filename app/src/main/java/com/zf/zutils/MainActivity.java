@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.zf.zutils.adapter.MainAdapter;
 import com.zf.zutils.base.BaseActivity;
+import com.zf.zutils.ui.DeviceAct;
 import com.zf.zutils.ui.KeyboardAct;
 import com.zf.zutils.vo.DataManager;
 
@@ -23,13 +24,16 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void init() {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
         rl.setLayoutManager(linearLayoutManager);
         adapter = new MainAdapter(DataManager.getList());
         adapter.setOnItemClickListener((adapter1, view, position) -> {
             switch (position) {
                 case 0:
                     KeyboardAct.launch(mContext);
+                    break;
+                case 1:
+                    DeviceAct.launch(mContext);
                     break;
             }
         });

@@ -7,7 +7,7 @@ public class DataManager {
     public static List<String> getList() {
         List<String> list = new ArrayList<>();
         list.add("操作软键盘");
-        list.add("");
+        list.add("展示设备信息");
         list.add("");
         list.add("");
         list.add("");

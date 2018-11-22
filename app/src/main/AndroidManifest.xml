@@ -17,6 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.KeyboardAct" />
+        <activity android:name=".ui.DeviceAct" />
     </application>
 
 </manifest>

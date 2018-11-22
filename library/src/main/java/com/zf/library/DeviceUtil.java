@@ -1,10 +1,12 @@
 package com.zf.library;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 import java.io.File;
@@ -19,6 +21,18 @@ import java.io.File;
 
 public final class DeviceUtil {
     public DeviceUtil() {
+    }
+
+    /**
+     * 获取真实的屏幕分辨率
+     *
+     * @return int[]{宽度,高度}
+     */
+    @SuppressLint("NewApi")
+    public static int[] getRealMetrics(Activity activity) {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getRealMetrics(displayMetrics);
+        return new int[]{displayMetrics.widthPixels, displayMetrics.heightPixels};
     }
 
     /**
@@ -100,13 +114,9 @@ public final class DeviceUtil {
     }
 
     public static class Device {
-        //手机品牌
-        String phoneBrand;
-        //手机型号
-        String phoneModel;
-        //手机Android API等级(22,23)
-        int buildLevel;
-        //手机Android 版本(5.0,6.0,7.0...)
-        String buildVersion;
+        public String phoneBrand;   //手机品牌
+        public String phoneModel;   //手机型号
+        public int buildLevel;      //手机Android API等级(22,23)
+        public String buildVersion; //手机Android 版本(5.0,6.0,7.0...)
     }
 }

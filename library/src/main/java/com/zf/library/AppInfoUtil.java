@@ -186,16 +186,16 @@ public final class AppInfoUtil {
      */
     public static class AppInfo {
         //应用名称
-        String appName;
+        public String appName;
         //包名
-        String packageName;
+        public String packageName;
         //应用icon
-        Drawable appIcon;
+        public Drawable appIcon;
         //版本名
-        String versionName;
+        public String versionName;
         //版本号
-        int versionCode = 0;
+        public int versionCode = 0;
         //app路径
-        String sourceDir;
+        public String sourceDir;
     }
 }
