@@ -37,13 +37,13 @@ public final class StringUtil {
      * 此方法用来简化采用StringBuilder组装字符串的操作
      * 只适用于确定的几个字符串连接
      *
-     * @param strs
+     * @param objs
      * @return
      */
-    public static String append(String... strs) {
+    public static String append(Object... objs) {
         StringBuilder sb = new StringBuilder();
-        for (String str : strs) {
-            sb.append(str);
+        for (Object obj : objs) {
+            sb.append(obj);
         }
         return sb.toString();
     }

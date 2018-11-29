@@ -3,6 +3,8 @@ package com.zf.library;
 import android.os.Build;
 import android.text.TextUtils;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -14,6 +16,7 @@ import java.nio.file.Files;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DecimalFormat;
 
 /**
  * author: zhufu
@@ -25,6 +28,129 @@ import java.security.NoSuchAlgorithmException;
 
 public final class FileUtil {
     private FileUtil() {
+    }
+
+    /**
+     * 计算文件大小
+     *
+     * @param path
+     * @return
+     */
+    public static String fileSize(String path) {
+        if (TextUtils.isEmpty(path)) {
+            return null;
+        }
+        return fileSize(new File(path));
+    }
+
+    /**
+     * 计算文件大小
+     *
+     * @param file
+     * @return
+     */
+    public static String fileSize(File file) {
+        if (file == null) {
+            return null;
+        }
+
+        long fileSize = file.length();
+        double dFileSize = fileSize;
+        if (dFileSize < 1024) {
+            return StringUtil.append(dFileSize, "B");
+        }
+
+        dFileSize = dFileSize / 1024d;
+        if (dFileSize < 1024) {
+            return StringUtil.append(Math.round(dFileSize), "KB");
+        }
+
+        dFileSize = dFileSize / 1024d;
+        if (dFileSize < 1024) {
+            DecimalFormat df = new DecimalFormat("#.##");
+            return StringUtil.append(df.format(dFileSize), "MB");
+        }
+
+        dFileSize = dFileSize / 1024d;
+        if (dFileSize < 1024) {
+            DecimalFormat df = new DecimalFormat("#.##");
+            return StringUtil.append(df.format(dFileSize), "GB");
+        }
+        return String.valueOf(fileSize);
+    }
+
+    /**
+     * byte转文件
+     * byte转file
+     *
+     * @param b          字节数组
+     * @param outputFile 输出的文件路径
+     * @return
+     */
+    public static File bytes2File(byte[] b, String outputFile) {
+        File ret = null;
+        BufferedOutputStream stream = null;
+        try {
+            ret = new File(outputFile);
+            FileOutputStream fstream = new FileOutputStream(ret);
+            stream = new BufferedOutputStream(fstream);
+            stream.write(b);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * 文件转byte
+     * file转byte
+     *
+     * @param file
+     * @return
+     */
+    public static byte[] file2Bytes(File file) {
+        byte[] ret = null;
+        try {
+            if (file == null) {
+                return null;
+            }
+            FileInputStream in = new FileInputStream(file);
+            ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
+            byte[] b = new byte[4096];
+            int n;
+            while ((n = in.read(b)) != -1) {
+                out.write(b, 0, n);
+            }
+            in.close();
+            out.close();
+            ret = out.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
+    /**
+     * 文件转byte
+     * file转byte
+     *
+     * @param path 文件路径
+     * @return
+     */
+    public static byte[] file2Bytes(String path) {
+        if (TextUtils.isEmpty(path)) {
+            return null;
+        }
+
+        return file2Bytes(new File(path));
     }
 
     /**
@@ -80,7 +206,7 @@ public final class FileUtil {
      * @return
      */
     public static boolean createDirs(File file) {
-        if (file != null && !file.exists() && file.isDirectory()) {
+        if (file != null && !file.exists()) {
             return file.mkdirs();
         }
         return false;
