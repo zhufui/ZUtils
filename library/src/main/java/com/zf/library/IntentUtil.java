@@ -1,11 +1,15 @@
 package com.zf.library;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
 
 /**
@@ -155,6 +159,48 @@ public final class IntentUtil {
         intent.setData(Uri.parse("package:" + packageName));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
+    }
+
+    /**
+     * 打开系统相册
+     *
+     * @param activity
+     * @param requestCode
+     * @param imageType   图片类型，可以写image/jpeg 、 image/png，所有类型写image/*，默认是所有类型
+     */
+    public static void choosePhoto(Activity activity, int requestCode, String imageType) {
+        Intent intentToPickPic = new Intent(Intent.ACTION_PICK, null);
+        intentToPickPic.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageType == null ? "image/*" : imageType);
+        activity.startActivityForResult(intentToPickPic, requestCode);
+    }
+
+    /**
+     * 打开系统相册
+     *
+     * @param activity
+     * @param requestCode
+     */
+    public static void choosePhoto(Activity activity, int requestCode) {
+        choosePhoto(activity, requestCode, null);
+    }
+
+    /**
+     * 删除系统中图片或者文件后，需要发送一个广播刷新媒体库
+     * 扫描文件
+     */
+    public static void scanFile(Context context, String[] paths) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            MediaScannerConnection.scanFile(context, paths,
+                    null, new MediaScannerConnection.OnScanCompletedListener() {
+                        public void onScanCompleted(String path, Uri uri) {
+                        }
+                    });
+        } else {
+            for (String path : paths) {
+                Uri data = Uri.parse("file://" + path);
+                context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, data));
+            }
+        }
     }
 
 }
