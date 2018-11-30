@@ -23,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 
 /**
  * 图片工具类
+ * bitmap所占内存=图片长度*图片宽度*一个像素点所占用的内存
  * 图片的压缩分三种方式：
  * 1.质量压缩，src.compress(Bitmap.CompressFormat.JPEG, quality, baos);这里的quality代表质量的取值范围，取值在0-100之间
  * 2.缩放压缩，即根据宽高对图片进行缩放压缩
