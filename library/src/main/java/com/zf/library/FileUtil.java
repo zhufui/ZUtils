@@ -7,10 +7,12 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.security.DigestInputStream;
@@ -418,7 +420,7 @@ public final class FileUtil {
     }
 
     /*****************复制文件的3种方式 start**********************/
-    private static void copyFileUsingFileStreams(File source, File dest)
+    public static void copyFileUsingFileStreams(File source, File dest)
             throws IOException {
         InputStream input = null;
         OutputStream output = null;
@@ -442,7 +444,7 @@ public final class FileUtil {
      * @param dest
      * @throws IOException
      */
-    private static void copyFileUsingFileChannels(File source, File dest) throws IOException {
+    public static void copyFileUsingFileChannels(File source, File dest) throws IOException {
         FileChannel inputChannel = null;
         FileChannel outputChannel = null;
         try {
@@ -455,13 +457,56 @@ public final class FileUtil {
     }
 
     /**
+     * 使用通道(channel)复制文件
+     *
+     * @param source 源文件
+     * @param dest   复制后生成的文件
+     * @throws IOException
+     */
+    public static void copyFileUsingFileChannels(String source, String dest) {
+        FileInputStream fin = null;
+        FileOutputStream fout = null;
+        FileChannel fcin = null;
+        FileChannel fcout = null;
+        try {
+            fin = new FileInputStream(source);
+            fout = new FileOutputStream(dest);
+            //获取数据源的输入输出通道
+            fcin = fin.getChannel();
+            fcout = fout.getChannel();
+            //创建缓冲区对象
+            ByteBuffer buff = ByteBuffer.allocate(1024);
+            while (true) {
+                //从通道读取数据&写入到缓冲区
+                //若已读取到通道末尾就返回-1
+                int r = fcin.read(buff);
+                if (r == -1) {
+                    break;
+                }
+                //传出数据准备
+                buff.flip();
+                //从buffer中读取数据&传出数据到通道
+                fcout.write(buff);
+                //重置缓冲区，这里只重置索引不重置数据
+                buff.clear();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            CloseUtil.closeIO(fcin, fcout, fin, fout);
+        }
+    }
+
+    /**
      * 调用java 7中的复制方法
      *
      * @param source
      * @param dest
      * @throws IOException
      */
-    private static void copyFileUsingJava7Files(File source, File dest)
+    public static void copyFileUsingJava7Files(File source, File dest)
             throws IOException {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Files.copy(source.toPath(), dest.toPath());
