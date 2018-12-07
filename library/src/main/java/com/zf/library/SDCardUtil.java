@@ -86,7 +86,7 @@ public final class SDCardUtil {
      */
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public static String getFreeSpaceStr() {
-        return ConvertUtil.byte2FitMemorySize(getFreeSpace());
+        return ConvertUtil.byte2MemorySize(getFreeSpace());
     }
 
     /**
@@ -101,6 +101,32 @@ public final class SDCardUtil {
         }
         StatFs stat = new StatFs(getSDCardPath());
         long availableBlocks = stat.getAvailableBlocksLong();
+        long blockSize = stat.getBlockSizeLong();
+        return availableBlocks * blockSize;
+    }
+
+    /**
+     * 获取SD卡总空间
+     *
+     * @return
+     */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+    public static String getTotalSpaceStr() {
+        return ConvertUtil.byte2MemorySize(getTotalSpace());
+    }
+
+    /**
+     * 获取SD卡总空间
+     *
+     * @return
+     */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+    public static long getTotalSpace() {
+        if (!isSDCardEnable()) {
+            throw new NullPointerException("sdcard permission denied");
+        }
+        StatFs stat = new StatFs(getSDCardPath());
+        long availableBlocks = stat.getBlockCountLong();
         long blockSize = stat.getBlockSizeLong();
         return availableBlocks * blockSize;
     }
@@ -127,7 +153,7 @@ public final class SDCardUtil {
     }
 
     public static class SDCardInfo {
-        public boolean isExist;
+        public boolean isExist;//sd卡是否存在
         public long totalBlocks;
         public long freeBlocks;
         public long availableBlocks;
