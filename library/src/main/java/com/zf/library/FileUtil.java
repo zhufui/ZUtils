@@ -57,6 +57,16 @@ public final class FileUtil {
         }
 
         long fileSize = file.length();
+        return fileSize(fileSize);
+    }
+
+    /**
+     * 计算文件大小
+     *
+     * @param fileSize
+     * @return
+     */
+    public static String fileSize(long fileSize) {
         double dFileSize = fileSize;
         if (dFileSize < 1024) {
             return StringUtil.append(dFileSize, "B");
