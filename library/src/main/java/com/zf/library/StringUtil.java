@@ -14,6 +14,19 @@ public final class StringUtil {
     }
 
     /**
+     * 获取文本的后缀
+     *
+     * @param str
+     * @return
+     */
+    public static String getSuffix(String str) {
+        if (str.lastIndexOf(".") == -1) {
+            return null;
+        }
+        return str.substring(str.lastIndexOf(".") + 1, str.length());
+    }
+
+    /**
      * 判断字符串是否为null或长度为0
      *
      * @param s 待校验字符串
