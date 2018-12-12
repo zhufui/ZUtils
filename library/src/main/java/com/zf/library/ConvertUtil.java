@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.text.DecimalFormat;
 
 /**
  * author: zhufu
@@ -196,6 +197,37 @@ public final class ConvertUtil {
             case GB:
                 return memorySize * ConvertUtil.GB;
         }
+    }
+
+    /**
+     * 将字节数转成合适的内存大小单位
+     *
+     * @param size
+     * @return
+     */
+    public static String byte2MemorySize(long size) {
+        double dFileSize = size;
+        if (dFileSize < 1024) {
+            return StringUtil.append(dFileSize, "B");
+        }
+
+        dFileSize = dFileSize / 1024d;
+        if (dFileSize < 1024) {
+            return StringUtil.append(Math.round(dFileSize), "KB");
+        }
+
+        dFileSize = dFileSize / 1024d;
+        if (dFileSize < 1024) {
+            DecimalFormat df = new DecimalFormat("#.##");
+            return StringUtil.append(df.format(dFileSize), "MB");
+        }
+
+        dFileSize = dFileSize / 1024d;
+        if (dFileSize < 1024) {
+            DecimalFormat df = new DecimalFormat("#.##");
+            return StringUtil.append(df.format(dFileSize), "GB");
+        }
+        return String.valueOf(size);
     }
 
     /**
