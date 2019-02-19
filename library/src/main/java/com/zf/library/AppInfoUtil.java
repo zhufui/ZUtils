@@ -6,6 +6,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -182,20 +183,47 @@ public final class AppInfoUtil {
     }
 
     /**
+     * 从apk文件中获取apk的相关信息
+     *
+     * @param context
+     * @param path    apk文件在sd卡上的路径
+     * @return
+     */
+    public static AppInfo getAppInfoByPath(Context context, String path) {
+        AppInfo ai = new AppInfo();
+        PackageManager pm = context.getPackageManager();
+        PackageInfo pkgInfo = pm.getPackageArchiveInfo(path, PackageManager.GET_ACTIVITIES);
+        if (pkgInfo == null) {
+            return null;
+        }
+        ApplicationInfo appInfo = pkgInfo.applicationInfo;
+        /* 必须加这两句，不然下面icon获取是default icon而不是应用包的icon */
+        appInfo.sourceDir = path;
+        appInfo.publicSourceDir = path;
+        ai.appName = pm.getApplicationLabel(appInfo).toString();
+        ai.packageName = appInfo.packageName;
+        Drawable icon1 = pm.getApplicationIcon(appInfo);        //得到图标信息
+        Drawable icon2 = appInfo.loadIcon(pm);                  //这里icon1和icon2是一样的
+        ai.appIcon = icon1;
+        ai.versionName = pkgInfo.versionName;                   // 得到版本信息
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            ai.versionCode = (int) pkgInfo.getLongVersionCode();//得到版本信息
+        } else {
+            ai.versionCode = pkgInfo.versionCode;
+        }
+        ai.sourceDir = path;
+        return ai;
+    }
+
+    /**
      * 应用相关信息
      */
     public static class AppInfo {
-        //应用名称
-        public String appName;
-        //包名
-        public String packageName;
-        //应用icon
-        public Drawable appIcon;
-        //版本名
-        public String versionName;
-        //版本号
-        public int versionCode = 0;
-        //app路径
-        public String sourceDir;
+        public String appName;//应用名称
+        public String packageName;//包名
+        public Drawable appIcon;//应用icon
+        public String versionName;//版本名
+        public int versionCode = 0;//版本号
+        public String sourceDir;//app路径
     }
 }
