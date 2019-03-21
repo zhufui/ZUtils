@@ -3,6 +3,7 @@ package com.zf.library;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Build;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
@@ -21,6 +22,41 @@ import java.io.File;
 
 public final class DeviceUtil {
     public DeviceUtil() {
+    }
+
+    /**
+     * @param activity
+     * @return 返回的是屏幕密度和屏幕密度dpi
+     */
+    @SuppressLint("NewApi")
+    public static int[] getDensity(Activity activity) {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getRealMetrics(displayMetrics);
+        return new int[]{(int) displayMetrics.density, displayMetrics.densityDpi};
+    }
+
+    /**
+     * 顶部状态栏的高度
+     *
+     * @param activity
+     * @return
+     */
+    public static int getStatusBarHeight(Activity activity) {
+        Resources resources = activity.getResources();
+        int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
+        return resources.getDimensionPixelSize(resourceId);
+    }
+
+    /**
+     * 底部导航的高度
+     *
+     * @param activity
+     * @return
+     */
+    public static int getNavigationBarHeight(Activity activity) {
+        Resources resources = activity.getResources();
+        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+        return resources.getDimensionPixelSize(resourceId);
     }
 
     /**
