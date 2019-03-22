@@ -10,7 +10,12 @@ import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * author: zhufu
@@ -22,6 +27,90 @@ import java.io.File;
 
 public final class DeviceUtil {
     public DeviceUtil() {
+    }
+
+    /**
+     * 判断cpu是否是64位的
+     *
+     * @return
+     */
+    public static boolean isCPU64() {
+        boolean result = false;
+        String mProcessor = null;
+        try {
+            mProcessor = getFieldFromCpuinfo("Processor");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (mProcessor != null) {
+            if (mProcessor.contains("aarch64")) {
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    private static String getFieldFromCpuinfo(String field) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader("/proc/cpuinfo"));
+        Pattern p = Pattern.compile(field + "\\s*:\\s*(.*)");
+
+        try {
+            String line;
+            while ((line = br.readLine()) != null) {
+                Matcher m = p.matcher(line);
+                if (m.matches()) {
+                    return m.group(1);
+                }
+            }
+        } finally {
+            br.close();
+        }
+        return null;
+    }
+
+    /**
+     * 获取CPU核数
+     *
+     * @return
+     */
+    public static int getCPUCount() {
+        return Runtime.getRuntime().availableProcessors();
+    }
+
+    /**
+     * 获取CPU型号
+     *
+     * @return
+     */
+    public static String getCPUName() {
+        String str1 = "/proc/cpuinfo";
+        String str2 = "";
+
+        try {
+            FileReader fr = new FileReader(str1);
+            BufferedReader localBufferedReader = new BufferedReader(fr);
+            while ((str2 = localBufferedReader.readLine()) != null) {
+                if (str2.contains("Hardware")) {
+                    return str2.split(":")[1];
+                }
+            }
+            localBufferedReader.close();
+        } catch (IOException e) {
+        }
+        return null;
+    }
+
+    /**
+     * 查询cpu的ABIs
+     *
+     * @return
+     */
+    public static String[] getCPUABIs() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return Build.SUPPORTED_ABIS;
+        }
+        return new String[]{Build.CPU_ABI};
     }
 
     /**
